@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SAFSight shared contract placeholder",
+  "description": "Placeholder only. Add agreed shared contract definitions here.",
+  "type": "object",
+  "additionalProperties": true
+}

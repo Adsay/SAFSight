@@ -13,6 +13,12 @@ enum OrganizationRole {
   MEMBER
 }
 
+enum AssetType {
+  DOMAIN
+  EMAIL
+  WEBSITE
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique @db.VarChar(254)
@@ -44,8 +50,22 @@ model Organization {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
   memberships Membership[]
+  assets      Asset[]
 
   @@map("organizations")
+}
+
+model Asset {
+  id             String       @id @default(cuid())
+  organizationId String       @map("organization_id")
+  type           AssetType
+  value          String
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, type, value])
+  @@map("assets")
 }
 
 model Membership {

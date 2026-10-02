@@ -18,6 +18,7 @@ export default async function OrganizationMembersPage({ params }: PageProps) {
         <Link className="back-link" href="/organizations">All organizations</Link>
         <h1>{context.organization.name}</h1>
         <p>Your role: {context.role}</p>
+        <Link className="secondary-button" href={`/organizations/${context.organizationId}/assets`}>Assets</Link>
       </div>
       <MemberManagement
         organizationId={context.organizationId}

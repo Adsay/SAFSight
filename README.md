@@ -19,3 +19,9 @@ The project currently contains foundation placeholders only. Scanner behavior, p
 ## Workspace
 
 Use pnpm for the JavaScript/TypeScript workspace. The Python engines remain independent and are not pnpm packages. See `AGENTS.md` for repository conventions and `.env.example` for configuration key names; do not commit a populated `.env` file.
+
+## Local PostgreSQL
+
+Copy `.env.example` to `.env`, then start the local database with `docker compose up -d postgres`. The Compose service is named `postgres` and stores data in the `postgres_data` named volume. The default database is `safsight`, available on `localhost:5433`; set `POSTGRES_PORT` to use another local port. Keep `DATABASE_URL` in `.env` synchronized with the configured PostgreSQL user, password, database, and port.
+
+After PostgreSQL is healthy, run `pnpm db:validate` and `pnpm db:migrate:deploy` to validate and apply the Prisma schema migrations. Use a local-only password, and do not commit `.env`.

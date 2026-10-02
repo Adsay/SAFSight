@@ -2,5 +2,23 @@
   "name": "safsight",
   "version": "0.1.0",
   "private": true,
-  "description": "Website, domain, and email security assessment framework"
+  "description": "Website, domain, and email security assessment framework",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "test": "pnpm --filter @safsight/web test",
+    "typecheck": "pnpm --filter @safsight/web typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "prisma": "^6.19.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3"
+  }
 }

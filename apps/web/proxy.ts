@@ -5,6 +5,8 @@ import { getUserForSession } from "@/lib/auth/auth-service";
 
 const protectedPaths = [
   "/dashboard",
+  "/organizations",
+  "/api/organizations",
   "/api/scans",
   "/api/assets",
   "/api/findings",
@@ -47,5 +49,5 @@ export const proxy = createProxy(async (token) =>
 );
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
+  matcher: ["/dashboard/:path*", "/organizations/:path*", "/api/:path*"],
 };

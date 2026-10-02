@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
-import { createProxy } from "../proxy";
+import { createProxy, isProtectedPath } from "../proxy";
 import { createAuthHandlers, getSessionToken, SESSION_COOKIE_NAME } from "../lib/auth/auth-http";
 import {
   DuplicateEmailError,
@@ -171,5 +171,8 @@ describe("authentication handlers", () => {
     expect(apiResponse.status).toBe(401);
     expect(authResponse.headers.get("x-middleware-next")).toBe("1");
     expect(validResponse.headers.get("x-middleware-next")).toBe("1");
+    expect(isProtectedPath("/organizations")).toBe(true);
+    expect(isProtectedPath("/organizations/organization-1")).toBe(true);
+    expect(isProtectedPath("/api/organizations/organization-1/members")).toBe(true);
   });
 });

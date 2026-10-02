@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique @db.VarChar(254)
@@ -14,6 +20,7 @@ model User {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   sessions     Session[]
+  memberships  Membership[]
 
   @@map("users")
 }
@@ -29,4 +36,29 @@ model Session {
   @@index([userId])
   @@index([expiresAt])
   @@map("sessions")
+}
+
+model Organization {
+  id          String       @id @default(cuid())
+  name        String       @db.VarChar(120)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  memberships Membership[]
+
+  @@map("organizations")
+}
+
+model Membership {
+  id             String           @id @default(cuid())
+  organizationId String           @map("organization_id")
+  userId         String           @map("user_id")
+  role           OrganizationRole @default(MEMBER)
+  createdAt      DateTime         @default(now()) @map("created_at")
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@index([organizationId, role])
+  @@map("memberships")
 }

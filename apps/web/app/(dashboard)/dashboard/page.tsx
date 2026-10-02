@@ -1,4 +1,5 @@
 import { LogoutButton } from "@/components/ui/logout-button";
+import Link from "next/link";
 import { requireCurrentUser } from "@/lib/auth/server";
 
 export default async function DashboardPage() {
@@ -13,6 +14,7 @@ export default async function DashboardPage() {
       <section className="dashboard-panel" aria-labelledby="dashboard-title">
         <h1 id="dashboard-title">Your workspace</h1>
         <p>Signed in as {user.email}</p>
+        <p><Link href="/organizations">Organizations and members</Link></p>
       </section>
     </main>
   );

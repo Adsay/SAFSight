@@ -19,6 +19,22 @@ enum AssetType {
   WEBSITE
 }
 
+enum ScanStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum FindingSeverity {
+  INFO
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique @db.VarChar(254)
@@ -51,6 +67,7 @@ model Organization {
   updatedAt   DateTime     @updatedAt @map("updated_at")
   memberships Membership[]
   assets      Asset[]
+  scans       Scan[]
 
   @@map("organizations")
 }
@@ -63,9 +80,84 @@ model Asset {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  scans          Scan[]
 
   @@unique([organizationId, type, value])
+  @@unique([id, organizationId])
   @@map("assets")
+}
+
+model Scan {
+  id             String       @id @default(cuid())
+  organizationId String       @map("organization_id")
+  assetId        String       @map("asset_id")
+  requestId      String       @map("request_id")
+  targetType     AssetType    @map("target_type")
+  targetValue    String       @map("target_value")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  asset          Asset        @relation(fields: [assetId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  result         ScanResult?
+
+  @@unique([organizationId, requestId])
+  @@index([organizationId, createdAt])
+  @@map("scans")
+}
+
+model ScanResult {
+  id              String          @id @default(cuid())
+  scanId          String          @unique @map("scan_id")
+  contractVersion String          @map("contract_version")
+  status          ScanStatus
+  engineId        String          @map("engine_id")
+  engineVersion   String          @map("engine_version")
+  startedAt       DateTime?       @map("started_at")
+  completedAt     DateTime?       @map("completed_at")
+  scan            Scan            @relation(fields: [scanId], references: [id], onDelete: Cascade)
+  error           ScanError?
+  findings        Finding[]
+
+  @@map("scan_results")
+}
+
+model ScanError {
+  id            String     @id @default(cuid())
+  scanResultId  String     @unique @map("scan_result_id")
+  code          String
+  message       String
+  retryable     Boolean?
+  scanResult    ScanResult @relation(fields: [scanResultId], references: [id], onDelete: Cascade)
+
+  @@map("scan_errors")
+}
+
+model Finding {
+  id            String          @id @default(cuid())
+  scanResultId  String          @map("scan_result_id")
+  position      Int
+  code          String
+  title         String
+  severity      FindingSeverity
+  description   String?
+  evidencePresent Boolean         @default(false) @map("evidence_present")
+  scanResult    ScanResult      @relation(fields: [scanResultId], references: [id], onDelete: Cascade)
+  evidence      Evidence[]
+
+  @@unique([scanResultId, position])
+  @@map("findings")
+}
+
+model Evidence {
+  id         String  @id @default(cuid())
+  findingId  String  @map("finding_id")
+  position   Int
+  kind       String
+  summary    String
+  data       Json?
+  finding    Finding @relation(fields: [findingId], references: [id], onDelete: Cascade)
+
+  @@unique([findingId, position])
+  @@map("evidence")
 }
 
 model Membership {

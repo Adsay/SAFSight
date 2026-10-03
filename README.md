@@ -14,7 +14,7 @@ This repository is organized as a pnpm workspace for the web application and sha
 - `prisma`: database schema and migrations.
 - `tests`: cross-package integration, end-to-end, contract, and fixture locations.
 
-The project currently contains foundation placeholders only. Scanner behavior, product APIs, and detailed data models are intentionally not defined yet.
+The project contains shared foundations and the M05 scan persistence layer. Scan execution, product APIs, and scanner behavior are not defined here.
 
 ## Workspace
 
@@ -25,3 +25,5 @@ Use pnpm for the JavaScript/TypeScript workspace. The Python engines remain inde
 Copy `.env.example` to `.env`, then start the local database with `docker compose up -d postgres`. The Compose service is named `postgres` and stores data in the `postgres_data` named volume. The default database is `safsight`, available on `localhost:5433`; set `POSTGRES_PORT` to use another local port. Keep `DATABASE_URL` in `.env` synchronized with the configured PostgreSQL user, password, database, and port.
 
 After PostgreSQL is healthy, run `pnpm db:validate` and `pnpm db:migrate:deploy` to validate and apply the Prisma schema migrations. Use a local-only password, and do not commit `.env`.
+
+See [persistence documentation](docs/development/persistence.md) for the scan record boundary and tenant constraints.
